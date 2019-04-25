@@ -33,17 +33,35 @@ class SwipeRow extends Component {
 
 	constructor(props) {
 		super(props);
+		this.isOpen = false;
+		this.previousTrackedTranslateX = 0;
+		this.previousTrackedDirection = null;
 		this.horizontalSwipeGestureBegan = false;
 		this.swipeInitialX = null;
 		this.parentScrollEnabled = true;
 		this.ranPreview = false;
-		this._ensureScrollEnabledTimer = null;
+		this._ensureScrollEnabledTimer = null
 		this.state = {
 			dimensionsSet: false,
 			hiddenHeight: 0,
 			hiddenWidth: 0
 		};
 		this._translateX = new Animated.Value(0);
+		if (this.props.onSwipeValueChange) {
+			this._translateX.addListener(({ value }) => {
+				let direction = this.previousTrackedDirection;
+				if (value !== this.previousTrackedTranslateX) {
+					direction = value > this.previousTrackedTranslateX ? 'right' : 'left';
+				}
+				this.props.onSwipeValueChange && this.props.onSwipeValueChange({
+					isOpen: this.isOpen,
+					direction,
+					value,
+				});
+				this.previousTrackedTranslateX = value;
+				this.previousTrackedDirection = direction;
+			});
+		}
 	}
 
 	componentWillMount() {
@@ -58,11 +76,13 @@ class SwipeRow extends Component {
 
 	componentWillUnmount() {
 		clearTimeout(this._ensureScrollEnabledTimer)
+		this._translateX.removeAllListeners();
 	}
 
 	shouldComponentUpdate(nextProps, nextState) {
 		if (this.state.hiddenHeight !== nextState.hiddenHeight ||
 			this.state.hiddenWidth !== nextState.hiddenWidth ||
+			!this.props.shouldItemUpdate ||
 			(this.props.shouldItemUpdate && this.props.shouldItemUpdate(this.props.item, nextProps.item))) {
 			return true
 		}
@@ -146,7 +166,6 @@ class SwipeRow extends Component {
 			if (this.props.stopRightSwipe && newDX < this.props.stopRightSwipe) { newDX = this.props.stopRightSwipe; }
 
 			this._translateX.setValue(newDX);
-
 		}
 	}
 
@@ -217,8 +236,10 @@ class SwipeRow extends Component {
 		).start( _ => {
 			this.ensureScrollEnabled()
 			if (toValue === 0) {
+				this.isOpen = false;
 				this.props.onRowDidClose && this.props.onRowDidClose();
 			} else {
+				this.isOpen = true;
 				this.props.onRowDidOpen && this.props.onRowDidOpen(toValue);
 			}
 		});
@@ -438,6 +459,10 @@ SwipeRow.propTypes = {
 	 * callback to determine whether component should update (currentItem, newItem)
 	 */
 	shouldItemUpdate: PropTypes.func,
+	/**
+	 * Callback invoked any time the swipe value of the row is changed
+	 */
+	onSwipeValueChange: PropTypes.func,
 };
 
 SwipeRow.defaultProps = {

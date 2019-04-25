@@ -115,12 +115,13 @@ class SwipeListView extends Component {
 	// when that happens, which will make sure the list is kept in bounds.
 	// See: https://github.com/jemise111/react-native-swipe-list-view/issues/109
 	onContentSizeChange(w, h) {
+		const { useFlatList, useSectionList } = this.props;
 		const height = h - this.layoutHeight;
 		if (this.yScrollOffset >= height && height > 0) {
-			if (this._listView instanceof ListView){
+			if (!useFlatList && !useSectionList && this._listView instanceof ListView) {
 				this._listView && this._listView.getScrollResponder().scrollToEnd();
 			}
-			if  (this._listView instanceof FlatList){
+			if (this._listView instanceof FlatList) {
 				this._listView && this._listView.scrollToEnd();
 			}
 		}
@@ -151,6 +152,7 @@ class SwipeListView extends Component {
 		} else {
 			return (
 				<SwipeRow
+					onSwipeValueChange={ this.props.onSwipeValueChange ? data => this.props.onSwipeValueChange({ ...data, key }) : null }
 					ref={row => this._rows[key] = row}
 					swipeGestureBegan={ _ => this.rowSwipeGestureBegan(key) }
 					onRowOpen={ toValue => this.onRowOpen(key, toValue) }
@@ -207,7 +209,7 @@ class SwipeListView extends Component {
 			key = this.props.keyExtractor(item, index);
 		}
 
-		const shouldPreviewRow = this.props.previewRowKey === key;
+		const shouldPreviewRow = typeof key !== 'undefined' && this.props.previewRowKey === key;
 
 		return this.renderCell(Component, HiddenComponent, key, item, shouldPreviewRow);
 	}
@@ -427,6 +429,10 @@ SwipeListView.propTypes = {
 	 * callback to determine whether component should update (currentItem, newItem)
 	 */
 	shouldItemUpdate: PropTypes.func,
+	/**
+	 * Callback invoked any time the swipe value of a SwipeRow is changed
+	 */
+	onSwipeValueChange: PropTypes.func,
 }
 
 SwipeListView.defaultProps = {
