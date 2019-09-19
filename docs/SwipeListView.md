@@ -6,10 +6,9 @@ A List that renders `<SwipeRow />`s
 
 | Prop | Notes | Type | Signature (func) | Default |
 |---|---|---|---|---|
-| `useFlatList` | Render list using React Native's `FlatList` | `bool` || `false`
 | `useSectionList` | Render list using React Native's `SectionList` | `bool` || `false`
 | `renderItem` | How to render a row in a FlatList. Should return a valid React Element. | `func` | `{ rowData: any, rowMap: { string: SwipeRowRef } } : ReactElement`
-| `renderHiddenItem` | How to render a hidden row in a FlatList (renders behind the row). Should return a valid React Element. This is required unless `renderItem` returns a `<SwipeRow>` (see [Per Row Behavior](https://github.com/jemise111/react-native-swipe-list-view#per-row-behavior)). | `func` | `{ rowData: any, rowMap: { string: SwipeRowRef } } : ReactElement`
+| `renderHiddenItem` | How to render a hidden row in a FlatList (renders behind the row). Should return a valid React Element. This is required unless `renderItem` returns a `<SwipeRow>` (see [Per Row Behavior](https://github.com/jemise111/react-native-swipe-list-view/blob/master/docs/per-row-behavior.md)). | `func` | `{ rowData: any, rowMap: { string: SwipeRowRef } } : ReactElement`
 | `leftOpenValue` | TranslateX value for opening the row to the left (positive number) | `number` || `0`
 | `rightOpenValue` | TranslateX value for opening the row to the right (negative number) | `number` || `0`
 | `closeOnRowPress` | Should open rows be closed when a row is pressed | `bool` || `true`
@@ -43,6 +42,5 @@ A List that renders `<SwipeRow />`s
 | `renderListView` | To render a custom ListView component, if you don't want to use ReactNative one. Note: This will call `renderRow`, not `renderItem` | `func` | `{ props, setRefCallback, onScrollCallback, renderItemCallback } : ReactElement (ListView)`
 | `previewFirstRow` [DEPRECATED] | Should the first SwipeRow do a slide out preview to show that the list is swipeable | `bool` || `false`
 | `previewRowIndex` [DEPRECATED] | Should the specified rowId do a slide out preview to show that the list is swipeable. ***Note***: This ID will be passed to this function to get the correct row index. https://facebook.github.io/react-native/docs/listviewdatasource.html#getrowidforflatindex | `number`
-| `renderRow` [DEPRECATED] | How to render a row. Should return a valid React Element. | `func` | `{ rowData, secId, rowId, rowMap }`
-| `renderHiddenRow` [DEPRECATED] | How to render a hidden row (renders behind the row). Should return a valid React Element. This is required unless `renderRow` returns a `<SwipeRow>` (see [Per Row Behavior](https://github.com/jemise111/react-native-swipe-list-view#per-row-behavior)). | `func` | `{ rowData, secId, rowId, rowMap }`
 | `shouldItemUpdate` | Callback to determine whether component should update | `func` | `{ currentItem: any, newItem: any }`
+| `useNativeDriver` | useNativeDriver: `true` for all animations | `bool` | `true` |
